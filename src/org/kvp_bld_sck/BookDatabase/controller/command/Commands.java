@@ -85,11 +85,8 @@ public enum Commands implements Command<String> {
     public static String execute(String commandName) throws ControllerException {
         for (Command<String> command : values())
             if (commandName.equals(command.getName()))
-                try {
-                    return command.execute();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                return command.execute();
+
         throw new CommandNotFoundException("no such command");
     }
 }

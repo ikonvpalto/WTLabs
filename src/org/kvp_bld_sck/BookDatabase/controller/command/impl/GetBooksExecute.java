@@ -12,6 +12,8 @@ import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
 
 import java.util.Date;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GetBooksExecute implements Executable<String> {
 
@@ -26,12 +28,13 @@ public class GetBooksExecute implements Executable<String> {
 
         Book book = new Book(title, author, date, location);
         try {
-            ServiceFabric.getFabric().getBookService().getBooks(book, SessionHolder.getSession());
+            return ServiceFabric.getFabric().getBookService().getBooks(book, SessionHolder.getSession())
+                    .stream()
+                    .map(Book::toString)
+                    .collect(Collectors.joining("\n"));
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.GET_BOOKS.getFailMessage(), e);
         }
-
-        return Commands.GET_BOOKS.getSuccessMessage();
     }
 
 }

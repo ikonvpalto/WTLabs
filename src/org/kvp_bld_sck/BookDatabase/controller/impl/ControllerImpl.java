@@ -12,7 +12,7 @@ public class ControllerImpl implements Controller {
         try {
             if (SessionHolder.isSessionOpen())
                 ViewFabric.getFabric().getView().showMessage(Commands.SIGN_OUT.execute());
-        } catch (ControllerException e) {
+        } catch (Exception e) {
             ViewFabric.getFabric().getView().showMessage(e.getMessage());
         }
 
@@ -23,7 +23,7 @@ public class ControllerImpl implements Controller {
         command = command.toLowerCase();
         try {
             return Commands.execute(command);
-        } catch (ControllerException e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }

@@ -1,17 +1,15 @@
 package org.kvp_bld_sck.BookDatabase.dao.impl;
 
 import org.kvp_bld_sck.BookDatabase.dao.UserDao;
+import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.UserDaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.UserDataFileNotFoundException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.UserNotFoundException;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class UserDaoImpl implements UserDao {
 
@@ -20,124 +18,87 @@ public class UserDaoImpl implements UserDao {
     private static final String USER_ID_FILE = ".\\resources\\userIds.dat";
 
     private List<User> users;
-    private RandomAccessFile file;
     private boolean working;
 
-    private void openUserDataFile() throws UserDaoException {
-        File dataFile = new File(USER_FILE);
-        if (!dataFile.exists())
-            try {
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                throw new UserDataFileNotFoundException("cannot create user data file", e);
-            }
+    private void write(PrintStream out, User user) throws DaoException {
         try {
-            file = new RandomAccessFile(dataFile, "rw");
-        } catch (FileNotFoundException e) {
-            throw new UserDaoException("cannot open user data file", e);
-        }
-    }
-
-    private void write(User user) throws UserDaoException {
-        try {
-            file.writeUTF("{\n");
-            file.writeUTF("\t" + user.getId() + "\n");
-            file.writeUTF("\t" + user.getUsername() + "\n");
-            file.writeUTF("\t" + user.getPassword() + "\n");
-            file.writeUTF("\t" + user.getEmail() + "\n");
-            file.writeUTF("\t" + user.getUserGroup().toString() + "\n");
-            file.writeUTF("}\n");
-        } catch (IOException e) {
+            out.println("{");
+            out.println("\t" + user.getId());
+            out.println("\t" + user.getUsername());
+            out.println("\t" + user.getPassword());
+            out.println("\t" + user.getEmail());
+            out.println("\t" + user.getUserGroup().toString());
+            out.println("}");
+        } catch (Exception e) {
             throw new UserDaoException("cannot write to user data file", e);
         }
     }
 
-    private User read() throws UserDaoException {
+    private User read(Scanner in) throws DaoException {
         try {
-            file.readLine();
-            long id = Long.parseLong(file.readLine().trim());
-            String username = file.readLine().trim();
-            String password = file.readLine().trim();
-            String email = file.readLine().trim();
-            User.UserGroup userGroup = User.UserGroup.getByName(file.readLine().trim());
-            file.readLine();
+            in.nextLine();
+            long id = Long.parseLong(in.nextLine().trim());
+            String username = in.nextLine().trim();
+            String password = in.nextLine().trim();
+            String email = in.nextLine().trim();
+            User.UserGroup userGroup = User.UserGroup.getByName(in.nextLine().trim());
+            in.nextLine();
 
             return new User(id, username, password, email, userGroup);
-        } catch (IOException e) {
-            throw new UserDaoException("cannot write to user data file", e);
+        } catch (Exception e) {
+            throw new UserDaoException("cannot read from user data file", e);
         }
     }
 
-    private List<User> load() throws UserDaoException {
-        try {
+    private void load() throws DaoException {
+        try(Scanner in = FileUtils.getIn(USER_FILE)) {
             users = new LinkedList<>();
-            while (file.getFilePointer() < file.length())
-                users.add(read());
-            return users;
-        } catch (IOException e) {
-            throw new UserDaoException("cannot close user data file", e);
+            while (in.hasNextLine())
+                users.add(read(in));
         }
     }
 
-    private void save() throws UserDaoException {
-        try {
-            file.setLength(0);
+    private void save() throws DaoException {
+        try(PrintStream out = FileUtils.getOut(USER_FILE)) {
             for (User user : users)
-                write(user);
-        } catch (IOException e) {
-            throw new UserDaoException("cannot close or sizing user data file", e);
+                write(out, user);
+//        } catch (IOException e) {
+//            throw new UserDaoException("cannot close or sizing user data file", e);
         }
     }
 
-    private void startWorking() throws UserDaoException {
+    private void startWorking() throws DaoException {
         if (!working) {
-            openUserDataFile();
             load();
             working = true;
         }
     }
 
-    private void endWorking() throws UserDaoException {
+    private void endWorking() throws DaoException {
         if (working) {
             save();
             users = null;
-            try {
-                file.close();
-            } catch (IOException e) {
-                throw new UserDaoException("cannot close user data file", e);
-            }
             working = false;
         }
     }
 
-    private long generateId() throws UserDaoException {
-        File idFile = new File(USER_ID_FILE);
-        if (!idFile.exists())
-            try {
-                idFile.createNewFile();
-            } catch (IOException e) {
-                throw new UserDataFileNotFoundException("cannot create user ids data file", e);
-            }
-        try (RandomAccessFile file = new RandomAccessFile(idFile, "rw")) {
-            long id = 1;
-            if (file.getFilePointer() < file.length())
-                id += file.readLong();
-            file.seek(0);
-            file.writeLong(id);
-            return id;
-        } catch (FileNotFoundException e) {
-            throw new UserDaoException("cannot open user ids data file", e);
-        } catch (IOException e) {
-            throw new UserDaoException("cannot close or seek in user ids data file", e);
+    private long generateId() throws DaoException {
+        long id = 1;
+        try (Scanner in = FileUtils.getIn(USER_ID_FILE)) {
+            if (in.hasNextLong())
+                id += in.nextLong();
         }
+        try (PrintStream out = FileUtils.getOut(USER_ID_FILE)) {
+            out.println(id);
+        }
+        return id;
     }
 
 
     @Override
-    public long saveUser(User user) throws UserDaoException {
+    public long saveUser(User user) throws DaoException {
         try {
             startWorking();
-
             user.setId(generateId());
             users.add(user);
             return user.getId();
@@ -147,12 +108,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUser(String username) throws UserDaoException {
+    public User getUser(String username) throws DaoException {
         try {
             startWorking();
 
             for (User user : users)
-                if (user.getUsername() == username)
+                if (user.getUsername().equals(username))
                     return user;
         } finally {
             endWorking();
@@ -161,7 +122,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUser(long id) throws UserDaoException {
+    public User getUser(long id) throws DaoException {
         try {
             startWorking();
 

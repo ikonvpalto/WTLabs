@@ -2,17 +2,15 @@ package org.kvp_bld_sck.BookDatabase.dao.impl;
 
 import org.kvp_bld_sck.BookDatabase.dao.BookDao;
 import org.kvp_bld_sck.BookDatabase.dao.exception.BookDaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.BookDataFileNotFoundException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.BookNotFoundException;
+import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.entity.Book;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class BookDaoImpl implements BookDao {
 
@@ -20,123 +18,84 @@ public class BookDaoImpl implements BookDao {
     private static final String BOOK_ID_FILE = ".\\resources\\bookIds.dat";
 
     private List<Book> books;
-    private RandomAccessFile file;
     private boolean working;
 
-    private void openBookDataFile() throws BookDaoException {
-        File dataFile = new File(BOOK_FILE);
-        if (!dataFile.exists())
-            try {
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                throw new BookDataFileNotFoundException("cannot create book data file", e);
-            }
+    private void write(PrintStream out, Book book) throws DaoException {
         try {
-            file = new RandomAccessFile(dataFile, "rw");
-        } catch (FileNotFoundException e) {
-            throw new BookDaoException("cannot open book data file", e);
-        }
-    }
-
-    private void write(Book book) throws BookDaoException {
-        try {
-            file.writeUTF("{\n");
-            file.writeUTF("\t" + book.getId() + "\n");
-            file.writeUTF("\t" + book.getAuthor() + "\n");
-            file.writeUTF("\t" + book.getTitle() + "\n");
-            file.writeUTF("\t" + book.getPublicationDate().getTime() + "\n");
-            file.writeUTF("\t" + book.getLocation() + "\n");
-            file.writeUTF("}\n");
-        } catch (IOException e) {
+            out.println("{");
+            out.println("\t" + book.getId());
+            out.println("\t" + book.getAuthor());
+            out.println("\t" + book.getTitle());
+            out.println("\t" + book.getPublicationDate().getTime());
+            out.println("\t" + book.getLocation());
+            out.println("}");
+        } catch (Exception e) {
             throw new BookDaoException("cannot write to book data file", e);
         }
     }
 
-    private Book read() throws BookDaoException {
+    private Book read(Scanner in) throws DaoException {
         try {
-            file.readLine();
-            long id = Long.parseLong(file.readLine().trim());
-            String author = file.readLine().trim();
-            String title = file.readLine().trim();
-            Date publicationDate = new Date(Long.parseLong(file.readLine().trim()));
-            String location = file.readLine().trim();
-            file.readLine();
+            in.nextLine();
+            long id = Long.parseLong(in.nextLine().trim());
+            String author = in.nextLine().trim();
+            String title = in.nextLine().trim();
+            Date publicationDate = new Date(Long.parseLong(in.nextLine().trim()));
+            String location = in.nextLine().trim();
+            in.nextLine();
 
             return new Book(id, author, title, publicationDate, location);
-        } catch (IOException e) {
-            throw new BookDaoException("cannot write to book data file", e);
+        } catch (Exception e) {
+            throw new BookDaoException("cannot read from book data file", e);
         }
     }
 
-    private List<Book> load() throws BookDaoException {
-        try {
+    private void load() throws DaoException {
+        try(Scanner in = FileUtils.getIn(BOOK_FILE)) {
             books = new LinkedList<>();
-            while (file.getFilePointer() < file.length())
-                books.add(read());
-            return books;
-        } catch (IOException e) {
-            throw new BookDaoException("cannot close book data file", e);
+            while (in.hasNextLine())
+                books.add(read(in));
         }
     }
 
-    private void save() throws BookDaoException {
-        try {
-            file.setLength(0);
+    private void save() throws DaoException {
+        try(PrintStream out = FileUtils.getOut(BOOK_FILE)) {
             for (Book book : books)
-                write(book);
-        } catch (IOException e) {
-            throw new BookDaoException("cannot close or sizing book data file", e);
+                write(out, book);
         }
     }
 
-    private void startWorking() throws BookDaoException {
+    private void startWorking() throws DaoException {
         if (!working) {
-            openBookDataFile();
             load();
             working = true;
         }
     }
 
-    private void endWorking() throws BookDaoException {
+    private void endWorking() throws DaoException {
         if (working) {
             save();
             books = null;
-            try {
-                file.close();
-            } catch (IOException e) {
-                throw new BookDaoException("cannot close book data file", e);
-            }
             working = false;
         }
     }
 
-    private long generateId() throws BookDaoException {
-        File idFile = new File(BOOK_ID_FILE);
-        if (!idFile.exists())
-            try {
-                idFile.createNewFile();
-            } catch (IOException e) {
-                throw new BookDataFileNotFoundException("cannot create book ids data file", e);
-            }
-        try (RandomAccessFile file = new RandomAccessFile(idFile, "rw")) {
-            long id = 1;
-            if (file.getFilePointer() < file.length())
-                id += file.readLong();
-            file.seek(0);
-            file.writeLong(id);
-            return id;
-        } catch (FileNotFoundException e) {
-            throw new BookDaoException("cannot open book ids data file", e);
-        } catch (IOException e) {
-            throw new BookDaoException("cannot close or seek in book ids data file", e);
+    private long generateId() throws DaoException {
+        long id = 1;
+        try (Scanner in = FileUtils.getIn(BOOK_ID_FILE)) {
+            if (in.hasNextLong())
+                id += in.nextLong();
         }
+        try (PrintStream out = FileUtils.getOut(BOOK_ID_FILE)) {
+            out.println(id);
+        }
+        return id;
     }
     
     @Override
-    public long saveBook(Book book) throws BookDaoException {
+    public long saveBook(Book book) throws DaoException {
         try {
             startWorking();
-
             book.setId(generateId());
             books.add(book);
             return book.getId();
@@ -146,7 +105,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Book getBook(long id) throws BookDaoException {
+    public Book getBook(long id) throws DaoException {
         try {
             startWorking();
 
@@ -160,7 +119,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public List<Book> getBooks(Book pattern) throws BookDaoException {
+    public List<Book> getBooks(Book pattern) throws DaoException {
         try {
             startWorking();
 
@@ -175,7 +134,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void updateBook(Book book) throws BookDaoException {
+    public void updateBook(Book book) throws DaoException {
         try {
             startWorking();
 
@@ -194,7 +153,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void deleteBook(Book book) throws BookDaoException {
+    public void deleteBook(Book book) throws DaoException {
         try {
             startWorking();
 
@@ -205,7 +164,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public boolean isBookExist(Book book) throws BookDaoException {
+    public boolean isBookExist(Book book) throws DaoException {
         try {
             startWorking();
 

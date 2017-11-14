@@ -53,7 +53,7 @@ public class BookServiceImpl implements BookService {
 
         try {
             return bookDao.getBook(id);
-        } catch (BookDaoException e) {
+        } catch (DaoException e) {
             throw new BookServiceException("cannot get book " + id, e);
         }
     }
@@ -71,7 +71,7 @@ public class BookServiceImpl implements BookService {
 
         try {
             return bookDao.getBooks(pattern);
-        } catch (BookDaoException e) {
+        } catch (DaoException e) {
             throw new BookServiceException("cannot get book by pattern " + pattern, e);
         }
     }
@@ -92,7 +92,7 @@ public class BookServiceImpl implements BookService {
             long id = bookDao.saveBook(book);
             ServiceFabric.getFabric().getUserService().sendEmailForAll(book + " was added");
             return id;
-        } catch (BookDaoException e) {
+        } catch (DaoException e) {
             throw new BookServiceException("cannot add " + book, e);
         }
     }
@@ -112,7 +112,7 @@ public class BookServiceImpl implements BookService {
 
         try {
             bookDao.updateBook(book);
-        } catch (BookDaoException e) {
+        } catch (DaoException e) {
             throw new BookServiceException("cannot update " + book, e);
         }
     }
@@ -128,7 +128,7 @@ public class BookServiceImpl implements BookService {
         try {
             bookDao.deleteBook(book);
             ServiceFabric.getFabric().getUserService().sendEmailForAll(book + " was deleted");
-        } catch (BookDaoException e) {
+        } catch (DaoException e) {
             throw new BookServiceException("cannot delete " + book, e);
         }
     }

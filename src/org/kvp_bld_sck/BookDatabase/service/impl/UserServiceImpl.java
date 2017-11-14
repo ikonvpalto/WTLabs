@@ -3,6 +3,7 @@ package org.kvp_bld_sck.BookDatabase.service.impl;
 import org.kvp_bld_sck.BookDatabase.dao.DaoFactory;
 import org.kvp_bld_sck.BookDatabase.dao.SessionDao;
 import org.kvp_bld_sck.BookDatabase.dao.UserDao;
+import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.SessionDaoException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.UserDaoException;
 import org.kvp_bld_sck.BookDatabase.entity.Session;
@@ -36,18 +37,18 @@ public class UserServiceImpl implements UserService {
             user = userDao.getUser(user.getUsername());
             if (!user.getPassword().equals(password))
                 throw new InvalidDataException("wrong password");
-        } catch (UserDaoException e) {
+        } catch (DaoException e) {
             throw new InvalidDataException(user.getUsername() + " not found");
         }
 
         try {
             if (null != sessionDao.getSession(user))
                 throw new UserServiceException(user.getUsername() + " already signed in");
-        } catch (SessionDaoException ignored) {}
+        } catch (DaoException ignored) {}
 
         try {
             return sessionDao.createSession(user);
-        } catch (SessionDaoException e) {
+        } catch (DaoException e) {
             throw new UserServiceException("cannot create session", e);
         }
     }
@@ -59,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             sessionDao.deleteSession(session);
-        } catch (SessionDaoException e) {
+        } catch (DaoException e) {
             throw new UserServiceException("cannot sign out");
         }
     }
@@ -77,11 +78,11 @@ public class UserServiceImpl implements UserService {
         try {
             if (null != userDao.getUser(user.getUsername()))
                 throw new InvalidDataException("user with username " + user.getUsername() + " already exists");
-        } catch (UserDaoException ignored) {}
+        } catch (DaoException ignored) {}
 
         try {
             userDao.saveUser(user);
-        } catch (UserDaoException e) {
+        } catch (DaoException e) {
             throw new UserServiceException("cannot sign up user", e);
         }
     }
@@ -93,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             return sessionDao.getUser(session);
-        } catch (SessionDaoException e) {
+        } catch (DaoException e) {
             throw new UserServiceException("session " + session.getId() + "not found");
         }
     }

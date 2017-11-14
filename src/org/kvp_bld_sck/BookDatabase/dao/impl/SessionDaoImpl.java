@@ -2,105 +2,75 @@ package org.kvp_bld_sck.BookDatabase.dao.impl;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.kvp_bld_sck.BookDatabase.dao.SessionDao;
+import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.SessionDaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.SessionDataFileNotFoundException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.SessionNotFoundException;
 import org.kvp_bld_sck.BookDatabase.entity.Session;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class SessionDaoImpl implements SessionDao {
 
     private static final String SESSION_FILE = ".\\resources\\session.dat";
 
     private List<Session> sessions;
-    private RandomAccessFile file;
     private boolean working;
 
-    private void openSessionDataFile() throws SessionDaoException {
-        File dataFile = new File(SESSION_FILE);
-        if (!dataFile.exists())
-            try {
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                throw new SessionDataFileNotFoundException("cannot create session data file", e);
-            }
+    private void write(PrintStream out, Session session) throws DaoException {
         try {
-            file = new RandomAccessFile(dataFile, "rw");
-        } catch (FileNotFoundException e) {
-            throw new SessionDaoException("cannot open session data file", e);
+            out.println("{");
+            out.println("\t" + session.getId());
+            out.println("\t" + session.getUser().getId());
+            out.println("}");
+        } catch (Exception e) {
+            throw new SessionDaoException("cannot write to user data file", e);
         }
     }
 
-    private void write(Session session) throws SessionDaoException {
+    private Session read(Scanner in) throws DaoException {
         try {
-            file.writeUTF("{\n");
-            file.writeUTF("\t" + session.getId() + "\n");
-            file.writeUTF("\t" + session.getUser().getId() + "\n");
-            file.writeUTF("}\n");
-        } catch (IOException e) {
-            throw new SessionDaoException("cannot write to session data file", e);
-        }
-    }
-
-    private Session read() throws SessionDaoException {
-        try {
-            file.readLine();
-            String id = file.readLine().trim();
-            long userId = Long.parseLong(file.readLine().trim());
-            file.readLine();
+            in.nextLine();
+            String id = in.nextLine().trim();
+            long userId = Long.parseLong(in.nextLine().trim());
+            in.nextLine();
 
             return new Session(id, new User(userId));
-        } catch (IOException e) {
-            throw new SessionDaoException("cannot write to session data file", e);
+        } catch (Exception e) {
+            throw new SessionDaoException("cannot read from user data file", e);
         }
     }
 
-    private List<Session> load() throws SessionDaoException {
-        try {
+    private void load() throws DaoException {
+        try(Scanner in = FileUtils.getIn(SESSION_FILE)) {
             sessions = new LinkedList<>();
-            while (file.getFilePointer() < file.length())
-                sessions.add(read());
-            return sessions;
-        } catch (IOException e) {
-            throw new SessionDaoException("cannot close session data file", e);
+            while (in.hasNextLine())
+                sessions.add(read(in));
         }
     }
 
-    private void save() throws SessionDaoException {
-        try {
-            file.setLength(0);
+    private void save() throws DaoException {
+        try(PrintStream out = FileUtils.getOut(SESSION_FILE)) {
             for (Session session : sessions)
-                write(session);
-        } catch (IOException e) {
-            throw new SessionDaoException("cannot close or sizing session data file", e);
+                write(out, session);
         }
     }
 
-    private void startWorking() throws SessionDaoException {
+    private void startWorking() throws DaoException {
         if (!working) {
-            openSessionDataFile();
             load();
             working = true;
         }
     }
 
-    private void endWorking() throws SessionDaoException {
+    private void endWorking() throws DaoException {
         if (working) {
             save();
             sessions = null;
-            try {
-                file.close();
-            } catch (IOException e) {
-                throw new SessionDaoException("cannot close session data file", e);
-            }
             working = false;
         }
     }
@@ -111,7 +81,7 @@ public class SessionDaoImpl implements SessionDao {
 
 
     @Override
-    public Session createSession(User user) throws SessionDaoException {
+    public Session createSession(User user) throws DaoException {
         try {
             startWorking();
 
@@ -125,7 +95,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public Session getSession(User user) throws SessionDaoException {
+    public Session getSession(User user) throws DaoException {
         try {
             startWorking();
 
@@ -139,7 +109,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void deleteSession(User user) throws SessionDaoException {
+    public void deleteSession(User user) throws DaoException {
         try {
             startWorking();
             sessions.remove(getSession(user));
@@ -149,7 +119,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void deleteSession(Session session) throws SessionDaoException {
+    public void deleteSession(Session session) throws DaoException {
         try {
             startWorking();
             sessions.remove(session);
@@ -159,7 +129,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public boolean isSessionExist(Session session) throws SessionDaoException {
+    public boolean isSessionExist(Session session) throws DaoException {
         try {
             startWorking();
             return sessions.contains(session);
@@ -169,7 +139,7 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public User getUser(Session session) throws SessionDaoException {
+    public User getUser(Session session) throws DaoException {
         try {
             startWorking();
 
