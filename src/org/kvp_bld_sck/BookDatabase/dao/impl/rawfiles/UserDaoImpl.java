@@ -1,4 +1,4 @@
-package org.kvp_bld_sck.BookDatabase.dao.impl;
+package org.kvp_bld_sck.BookDatabase.dao.impl.rawfiles;
 
 import org.kvp_bld_sck.BookDatabase.dao.UserDao;
 import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
