@@ -17,8 +17,8 @@ public class SignUpExecute implements Executable<String> {
 
     @Override
     public String execute() throws ControllerException {
-        String username = userDataGetter.getUsername();
-        String email = userDataGetter.getEmail();
+        String username = userDataGetter.getUsername(true);
+        String email = userDataGetter.getEmail(true);
         String password = userDataGetter.getConfirmedPassword();
 
         password = DigestUtils.md5Hex(password);

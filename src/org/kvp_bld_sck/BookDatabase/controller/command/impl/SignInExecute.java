@@ -18,7 +18,7 @@ public class SignInExecute implements Executable<String> {
         if (SessionHolder.isSessionOpen())
             return "there is user had sign in";
 
-        String username = userDataGetter.getUsername();
+        String username = userDataGetter.getUsername(true);
         String password = userDataGetter.getPassword();
 
         password = DigestUtils.md5Hex(password);

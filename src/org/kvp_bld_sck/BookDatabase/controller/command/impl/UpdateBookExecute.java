@@ -19,11 +19,11 @@ public class UpdateBookExecute implements Executable<String> {
 
     @Override
     public String execute() throws ControllerException {
-        String title = userDataGetter.getTitle();
-        String author = userDataGetter.getAuthor();
+        String title = userDataGetter.getTitle(true);
+        String author = userDataGetter.getAuthor(true);
         Date date = userDataGetter.getDate();
         long id = userDataGetter.getId();
-        String location = userDataGetter.getLocation();
+        String location = userDataGetter.getLocation(true);
 
         Book book = new Book(id, title, author, date, location);
 

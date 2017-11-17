@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class BookDaoImpl implements BookDao {
 
@@ -20,6 +21,13 @@ public class BookDaoImpl implements BookDao {
     private List<Book> books;
     private boolean working;
 
+
+    public boolean like(Book pattern, Book book) {
+        boolean isTitleLike = ((null == pattern.getTitle()) || (null == book.getTitle()) || Pattern.compile(pattern.getTitle()).matcher(book.getTitle()).find());
+        boolean isAuthorLike = ((null == pattern.getAuthor()) || (null == book.getAuthor()) || Pattern.compile(pattern.getAuthor()).matcher(book.getAuthor()).find());
+        return isAuthorLike && isTitleLike;
+    }
+    
     private void write(PrintStream out, Book book) throws DaoException {
         try {
             out.println("{");
@@ -125,7 +133,7 @@ public class BookDaoImpl implements BookDao {
 
             List<Book> result = new LinkedList<>();
             for (Book book : books)
-                if (book.like(pattern))
+                if (like(pattern, book))
                     result.add(book);
             return result;
         } finally {

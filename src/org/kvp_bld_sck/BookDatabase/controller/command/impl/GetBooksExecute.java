@@ -21,12 +21,10 @@ public class GetBooksExecute implements Executable<String> {
 
     @Override
     public String execute() throws ControllerException {
-        String title = userDataGetter.getTitle();
-        String author = userDataGetter.getAuthor();
-        Date date = userDataGetter.getDate();
-        String location = userDataGetter.getLocation();
+        String title = userDataGetter.getTitle(false);
+        String author = userDataGetter.getAuthor(false);
 
-        Book book = new Book(title, author, date, location);
+        Book book = new Book(title, author);
         try {
             return ServiceFabric.getFabric().getBookService().getBooks(book, SessionHolder.getSession())
                     .stream()

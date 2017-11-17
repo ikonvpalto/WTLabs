@@ -32,21 +32,21 @@ public class UserDataGetterImpl implements UserDataGetter {
     }
 
     @Override
-    public String getUsername() throws UserDataNotValidException {
+    public String getUsername(boolean needValidate) throws UserDataNotValidException {
         View view = ViewFabric.getFabric().getView();
 
         String username = view.getAdditionalInfo(UserInfoKind.USERNAME.getKindName());
-        if (!NAME.matcher(username).matches())
+        if (needValidate && !NAME.matcher(username).matches())
             throw new UserDataNotValidException(UserInfoKind.USERNAME.getKindName() + " not valid");
         return username;
     }
 
     @Override
-    public String getEmail() throws UserDataNotValidException {
+    public String getEmail(boolean needValidate) throws UserDataNotValidException {
         View view = ViewFabric.getFabric().getView();
 
         String email = view.getAdditionalInfo(UserInfoKind.EMAIL.getKindName());
-        if (!EMAIL.matcher(email).matches())
+        if (needValidate && !EMAIL.matcher(email).matches())
             throw new UserDataNotValidException(UserInfoKind.EMAIL.getKindName() + " not valid");
         return email;
     }
@@ -95,21 +95,21 @@ public class UserDataGetterImpl implements UserDataGetter {
     }
 
     @Override
-    public String getTitle() throws UserDataNotValidException {
+    public String getTitle(boolean needValidate) throws UserDataNotValidException {
         View view = ViewFabric.getFabric().getView();
 
         String title = view.getAdditionalInfo(UserInfoKind.TITLE.getKindName());
-        if (!TITLE.matcher(title).matches())
+        if (needValidate && !TITLE.matcher(title).matches())
             throw new UserDataNotValidException(UserInfoKind.TITLE.getKindName() + " not valid");
         return title;
     }
 
     @Override
-    public String getAuthor() throws UserDataNotValidException {
+    public String getAuthor(boolean needValidate) throws UserDataNotValidException {
         View view = ViewFabric.getFabric().getView();
 
         String author = view.getAdditionalInfo(UserInfoKind.AUTHOR.getKindName());
-        if (!AUTHOR.matcher(author).matches())
+        if (needValidate && !AUTHOR.matcher(author).matches())
             throw new UserDataNotValidException(UserInfoKind.AUTHOR.getKindName() + " not valid");
         return author;
     }
@@ -134,11 +134,11 @@ public class UserDataGetterImpl implements UserDataGetter {
     }
 
     @Override
-    public String getLocation() throws UserDataNotValidException {
+    public String getLocation(boolean needValidate) throws UserDataNotValidException {
         View view = ViewFabric.getFabric().getView();
 
         String location = view.getAdditionalInfo(UserInfoKind.BOOK_LOCATION.getKindName());
-        if (!LOCATION.matcher(location).matches())
+        if (needValidate && !LOCATION.matcher(location).matches())
             throw new UserDataNotValidException(UserInfoKind.BOOK_LOCATION.getKindName() + " not valid");
         return location;
     }
