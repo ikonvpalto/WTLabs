@@ -63,10 +63,7 @@ public class BookServiceImpl implements BookService {
         if (!checkPermissions(session, Set.of(User.UserGroup.ADMINISTRATOR, User.UserGroup.USER)))
             throw new PermissionDeniedException("cannot get books");
 
-        if ((null == pattern)
-                || (null == pattern.getAuthor())
-                || (null == pattern.getTitle())
-                || (null == pattern.getPublicationDate()))
+        if (null == pattern)
             throw new InvalidDataException("book pattern not correct");
 
         try {
