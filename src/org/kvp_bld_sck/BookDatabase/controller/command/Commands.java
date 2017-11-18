@@ -16,7 +16,11 @@ public enum Commands implements Command<String> {
     ADD_BOOK(new AddBookExecute(), "add book"),
     UPDATE_BOOK(new UpdateBookExecute(), "update book"),
     DELETE_BOOK(new DeleteBookExecute(), "delete book"),
-    ADD_PROFILE(new AddProfileExecute(), "add profile");
+    ADD_PROFILE(new AddProfileExecute(), "add profile"),
+    GET_PROFILE_BY_ID(new GetProfileByIdExecute(), "get profile"),
+    GET_MAN_PROFILE(new GetManProfileExecute(), "get man profile"),
+    UPDATE_PROFILE(new UpdateProfileExecute(), "update profile"),
+    DELETE_PROFILE(new DeleteProfileExecute(), "delete profile");
 
     private Executable<String> command;
     private String commandName;
@@ -90,4 +94,5 @@ public enum Commands implements Command<String> {
 
         throw new CommandNotFoundException("no such command");
     }
+
 }
