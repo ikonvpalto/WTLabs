@@ -2,51 +2,29 @@ package org.kvp_bld_sck.BookDatabase.service.impl;
 
 import org.kvp_bld_sck.BookDatabase.dao.BookDao;
 import org.kvp_bld_sck.BookDatabase.dao.DaoFactory;
-import org.kvp_bld_sck.BookDatabase.dao.SessionDao;
-import org.kvp_bld_sck.BookDatabase.dao.UserDao;
-import org.kvp_bld_sck.BookDatabase.dao.exception.BookDaoException;
 import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.entity.Book;
 import org.kvp_bld_sck.BookDatabase.entity.Session;
-import org.kvp_bld_sck.BookDatabase.entity.User;
 import org.kvp_bld_sck.BookDatabase.service.BookService;
-import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
 import org.kvp_bld_sck.BookDatabase.service.exception.BookServiceException;
 import org.kvp_bld_sck.BookDatabase.service.exception.InvalidDataException;
 import org.kvp_bld_sck.BookDatabase.service.exception.PermissionDeniedException;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
 
 import java.util.List;
-import java.util.Set;
 
 public class BookServiceImpl implements BookService {
 
     private BookDao bookDao;
-    private SessionDao sessionDao;
-    private UserDao userDao;
 
     public BookServiceImpl() {
         bookDao = DaoFactory.getFactory().getBookDao();
-        userDao = DaoFactory.getFactory().getUserDao();
-        sessionDao = DaoFactory.getFactory().getSessionDao();
-    }
-
-    private boolean checkPermissions(Session session, Set<User.UserGroup> accept) throws ServiceException {
-        if ((null == session) || (null == session.getId()))
-            throw new InvalidDataException("session id not correct");
-        User user;
-        try {
-            user = userDao.getUser(sessionDao.getUser(session).getId());
-        } catch (DaoException e) {
-            throw new BookServiceException("cannot get user by session " + session.getId());
-        }
-        return accept.contains(user.getUserGroup());
     }
 
     @Override
     public Book getBook(long id, Session session) throws ServiceException {
-        if (!checkPermissions(session, Set.of(User.UserGroup.ADMINISTRATOR, User.UserGroup.USER)))
-            throw new PermissionDeniedException("cannot get book");
+        if (!PermissionChecker.getChecker().checkMethod("get", session))
+            throw new PermissionDeniedException("cannot get book: permission denied");
 
         if (id < 1)
             throw new InvalidDataException("book id not correct");
@@ -60,8 +38,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooks(Book pattern, Session session) throws ServiceException {
-        if (!checkPermissions(session, Set.of(User.UserGroup.ADMINISTRATOR, User.UserGroup.USER)))
-            throw new PermissionDeniedException("cannot get books");
+        if (!PermissionChecker.getChecker().checkMethod("get", session))
+            throw new PermissionDeniedException("cannot get books: permission denied");
 
         if (null == pattern)
             throw new InvalidDataException("book pattern not correct");
@@ -75,8 +53,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public long addBook(Book book, Session session) throws ServiceException {
-        if (!checkPermissions(session, Set.of(User.UserGroup.ADMINISTRATOR)))
-            throw new PermissionDeniedException("cannot add book");
+        if (!PermissionChecker.getChecker().checkMethod("add", session))
+            throw new PermissionDeniedException("cannot add book: permission denied");
 
         if ((null == book)
                 || (null == book.getAuthor())
@@ -86,8 +64,7 @@ public class BookServiceImpl implements BookService {
             throw new InvalidDataException("book data not correct");
 
         try {
-            long id = bookDao.saveBook(book);
-            return id;
+            return bookDao.saveBook(book);
         } catch (DaoException e) {
             throw new BookServiceException("cannot add " + book, e);
         }
@@ -95,8 +72,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void updateBook(Book book, Session session) throws ServiceException {
-        if (!checkPermissions(session, Set.of(User.UserGroup.ADMINISTRATOR)))
-            throw new PermissionDeniedException("cannot update book");
+        if (!PermissionChecker.getChecker().checkMethod("update", session))
+            throw new PermissionDeniedException("cannot update book: permission denied");
 
         if ((null == book)
                 || (null == book.getAuthor())
@@ -115,8 +92,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(Book book, Session session) throws ServiceException {
-        if (!checkPermissions(session, Set.of(User.UserGroup.ADMINISTRATOR)))
-            throw new PermissionDeniedException("cannot delete book");
+        if (!PermissionChecker.getChecker().checkMethod("delete", session))
+            throw new PermissionDeniedException("cannot delete book: permission denied");
 
         if ((null == book) || (1 > book.getId()))
             throw new InvalidDataException("book data not correct");

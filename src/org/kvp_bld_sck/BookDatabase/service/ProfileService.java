@@ -8,7 +8,7 @@ public interface ProfileService {
 
     Profile getProfile(long id, Session session) throws ServiceException;
     Profile getProfile(String fullName, Session session) throws ServiceException;
-    long saveProfile(Profile profile, Session session) throws ServiceException;
+    long addProfile(Profile profile, Session session) throws ServiceException;
     void updateProfile(Profile profile, Session session) throws ServiceException;
     void deleteProfile(long id, Session session) throws ServiceException;
 

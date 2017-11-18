@@ -30,7 +30,7 @@ public class AddProfileExecute implements Executable<String> {
         Profile profile = new Profile(fullName, sex, birthDate, characteristics, securityLevel);
 
         try {
-            return "new book id=" + String.valueOf(profileService.saveProfile(profile, SessionHolder.getSession()));
+            return "new book id=" + String.valueOf(profileService.addProfile(profile, SessionHolder.getSession()));
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.ADD_PROFILE.getFailMessage(), e);
         }
