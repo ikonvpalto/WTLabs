@@ -99,14 +99,4 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void sendEmail(String text, List<User> receivers) throws ServiceException{
-
-    }
-
-    @Override
-    public void sendEmailForAll(String text) throws ServiceException {
-
-    }
-
 }

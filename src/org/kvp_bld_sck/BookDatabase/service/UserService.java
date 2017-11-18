@@ -16,7 +16,5 @@ public interface UserService {
     void signOut(Session session) throws ServiceException;
     void signUp(User user) throws ServiceException;
     User getSignedInUser(Session session) throws ServiceException;
-    void sendEmail(String text, List<User> receivers) throws ServiceException;
-    void sendEmailForAll(String text) throws ServiceException;
 
 }

@@ -87,7 +87,6 @@ public class BookServiceImpl implements BookService {
 
         try {
             long id = bookDao.saveBook(book);
-            ServiceFabric.getFabric().getUserService().sendEmailForAll(book + " was added");
             return id;
         } catch (DaoException e) {
             throw new BookServiceException("cannot add " + book, e);
@@ -124,7 +123,6 @@ public class BookServiceImpl implements BookService {
 
         try {
             bookDao.deleteBook(book);
-            ServiceFabric.getFabric().getUserService().sendEmailForAll(book + " was deleted");
         } catch (DaoException e) {
             throw new BookServiceException("cannot delete " + book, e);
         }
