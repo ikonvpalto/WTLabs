@@ -9,6 +9,7 @@ public class DaoFactory {
     private UserDao userDao;
     private BookDao bookDao;
     private SessionDao sessionDao;
+    private ProfileDao profileDao;
 
     private DaoFactory() {
         sessionDao = new SessionDaoImpl();
@@ -32,5 +33,9 @@ public class DaoFactory {
 
     public SessionDao getSessionDao() {
         return sessionDao;
+    }
+
+    public ProfileDao getProfileDao() {
+        return profileDao;
     }
 }

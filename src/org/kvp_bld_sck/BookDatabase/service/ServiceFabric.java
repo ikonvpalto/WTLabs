@@ -7,6 +7,7 @@ public class ServiceFabric {
 
     private UserService userService;
     private BookService bookService;
+    private ProfileService profileService;
 
     private ServiceFabric() {
         userService = new UserServiceImpl();
@@ -25,5 +26,9 @@ public class ServiceFabric {
 
     public BookService getBookService() {
         return bookService;
+    }
+
+    public ProfileService getProfileService() {
+        return profileService;
     }
 }
