@@ -6,7 +6,7 @@ public class Profile {
 
     private long id;
     private String fullName;
-    private String sex;
+    private Sex sex;
     private Date birthDate;
     private String characteristics;
     private SecurityLevel securityLevel;
@@ -18,7 +18,7 @@ public class Profile {
         this.id = id;
     }
 
-    public Profile(String fullName, String sex, Date birthDate, String characteristics, SecurityLevel securityLevel) {
+    public Profile(String fullName, Sex sex, Date birthDate, String characteristics, SecurityLevel securityLevel) {
         this.fullName = fullName;
         this.sex = sex;
         this.birthDate = birthDate;
@@ -26,7 +26,7 @@ public class Profile {
         this.securityLevel = securityLevel;
     }
 
-    public Profile(long id, String fullName, String sex, Date birthDate, String characteristics, SecurityLevel securityLevel) {
+    public Profile(long id, String fullName, Sex sex, Date birthDate, String characteristics, SecurityLevel securityLevel) {
         this.id = id;
         this.fullName = fullName;
         this.sex = sex;
@@ -53,11 +53,11 @@ public class Profile {
         return this;
     }
 
-    public String getSex() {
+    public Sex getSex() {
         return sex;
     }
 
-    public Profile setSex(String sex) {
+    public Profile setSex(Sex sex) {
         this.sex = sex;
         return this;
     }
@@ -89,6 +89,7 @@ public class Profile {
         return this;
     }
 
+
     public enum SecurityLevel {
         PUBLIC,
         SECRET,
@@ -100,6 +101,20 @@ public class Profile {
                 if (securityLevel.toString().toLowerCase().equals(levelName))
                     return securityLevel;
             return TOP_SECRET;
+        }
+    }
+
+    public enum Sex {
+        MALE,
+        FEMALE,
+        OTHER;
+
+        public static Sex getByName(String sexName) {
+            sexName = sexName.toLowerCase();
+            for (Sex sex : values())
+                if (sex.toString().toLowerCase().equals(sexName))
+                    return sex;
+            return OTHER;
         }
     }
 

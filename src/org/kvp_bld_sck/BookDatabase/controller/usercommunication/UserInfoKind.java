@@ -9,8 +9,13 @@ public enum UserInfoKind {
     ID,
     TITLE,
     AUTHOR,
-    PUBLISH_DATE,
-    BOOK_LOCATION;
+    PUBLISH_DATE("publish date"),
+    BOOK_LOCATION("book location"),
+    FULL_NAME("full name"),
+    BIRTH_DATE("birth date"),
+    SEX,
+    CHARACTERISTICS,
+    SECURITY_LEVEL("security level");
 
     private String kindName;
 

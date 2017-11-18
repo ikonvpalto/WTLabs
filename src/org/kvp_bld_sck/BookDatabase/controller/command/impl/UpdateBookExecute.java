@@ -21,7 +21,7 @@ public class UpdateBookExecute implements Executable<String> {
     public String execute() throws ControllerException {
         String title = userDataGetter.getTitle(true);
         String author = userDataGetter.getAuthor(true);
-        Date date = userDataGetter.getDate();
+        Date date = userDataGetter.getPublishDate();
         long id = userDataGetter.getId();
         String location = userDataGetter.getLocation(true);
 

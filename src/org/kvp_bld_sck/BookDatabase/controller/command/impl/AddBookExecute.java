@@ -21,7 +21,7 @@ public class AddBookExecute implements Executable<String> {
     public String execute() throws ControllerException {
         String title = userDataGetter.getTitle(true);
         String author = userDataGetter.getAuthor(true);
-        Date date = userDataGetter.getDate();
+        Date date = userDataGetter.getPublishDate();
         String location = userDataGetter.getLocation(true);
 
         Book book = new Book(title, author, date, location);

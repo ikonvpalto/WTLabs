@@ -15,7 +15,8 @@ public enum Commands implements Command<String> {
     GET_BOOKS(new GetBooksExecute(), "get books"),
     ADD_BOOK(new AddBookExecute(), "add book"),
     UPDATE_BOOK(new UpdateBookExecute(), "update book"),
-    DELETE_BOOK(new DeleteBookExecute(), "delete book");
+    DELETE_BOOK(new DeleteBookExecute(), "delete book"),
+    ADD_PROFILE(new AddProfileExecute(), "add profile");
 
     private Executable<String> command;
     private String commandName;
