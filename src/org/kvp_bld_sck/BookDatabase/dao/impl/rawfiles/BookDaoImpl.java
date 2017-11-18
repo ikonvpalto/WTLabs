@@ -22,9 +22,13 @@ public class BookDaoImpl implements BookDao {
     private boolean working;
 
 
-    public boolean like(Book pattern, Book book) {
-        boolean isTitleLike = ((null == pattern.getTitle()) || (null == book.getTitle()) || Pattern.compile(pattern.getTitle()).matcher(book.getTitle()).find());
-        boolean isAuthorLike = ((null == pattern.getAuthor()) || (null == book.getAuthor()) || Pattern.compile(pattern.getAuthor()).matcher(book.getAuthor()).find());
+    private boolean like(Book pattern, Book book) {
+        boolean isTitleLike = ((null != pattern.getTitle())
+                            && (null != book.getTitle())
+                            && Pattern.compile(pattern.getTitle()).matcher(book.getTitle()).matches());
+        boolean isAuthorLike = ((null != pattern.getAuthor())
+                             && (null != book.getAuthor())
+                             && Pattern.compile(pattern.getAuthor()).matcher(book.getAuthor()).matches());
         return isAuthorLike && isTitleLike;
     }
     

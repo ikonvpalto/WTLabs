@@ -10,6 +10,7 @@ import org.kvp_bld_sck.BookDatabase.controller.usercommunication.impl.UserDataGe
 import org.kvp_bld_sck.BookDatabase.entity.Book;
 import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.view.ViewFabric;
 
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -21,6 +22,8 @@ public class GetBooksExecute implements Executable<String> {
 
     @Override
     public String execute() throws ControllerException {
+        ViewFabric.getFabric().getView().showMessage("*enter regex*");
+
         String title = userDataGetter.getTitle(false);
         String author = userDataGetter.getAuthor(false);
 
