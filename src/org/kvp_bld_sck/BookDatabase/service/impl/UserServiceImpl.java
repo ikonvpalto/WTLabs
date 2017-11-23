@@ -4,16 +4,12 @@ import org.kvp_bld_sck.BookDatabase.dao.DaoFactory;
 import org.kvp_bld_sck.BookDatabase.dao.SessionDao;
 import org.kvp_bld_sck.BookDatabase.dao.UserDao;
 import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.SessionDaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.UserDaoException;
-import org.kvp_bld_sck.BookDatabase.entity.Session;
+import org.kvp_bld_sck.BookDatabase.entity.UserSession;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 import org.kvp_bld_sck.BookDatabase.service.UserService;
 import org.kvp_bld_sck.BookDatabase.service.exception.InvalidDataException;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
 import org.kvp_bld_sck.BookDatabase.service.exception.UserServiceException;
-
-import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
@@ -26,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Session signIn(User user) throws ServiceException{
+    public UserSession signIn(User user) throws ServiceException{
         if ((null == user)
             || (null == user.getUsername())
             || (null == user.getPassword()))
@@ -54,12 +50,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void signOut(Session session) throws ServiceException{
-        if ((null == session) || (null == session.getId()))
-            throw new InvalidDataException("session id not correct");
+    public void signOut(UserSession userSession) throws ServiceException{
+        if ((null == userSession) || (null == userSession.getId()))
+            throw new InvalidDataException("userSession id not correct");
 
         try {
-            sessionDao.deleteSession(session);
+            sessionDao.deleteSession(userSession);
         } catch (DaoException e) {
             throw new UserServiceException("cannot sign out");
         }
@@ -88,14 +84,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getSignedInUser(Session session) throws ServiceException{
-        if ((null == session) || (null == session.getId()))
-            throw new InvalidDataException("session id not correct");
+    public User getSignedInUser(UserSession userSession) throws ServiceException{
+        if ((null == userSession) || (null == userSession.getId()))
+            throw new InvalidDataException("userSession id not correct");
 
         try {
-            return sessionDao.getUser(session);
+            return sessionDao.getUser(userSession);
         } catch (DaoException e) {
-            throw new UserServiceException("session " + session.getId() + "not found");
+            throw new UserServiceException("userSession " + userSession.getId() + "not found");
         }
     }
 

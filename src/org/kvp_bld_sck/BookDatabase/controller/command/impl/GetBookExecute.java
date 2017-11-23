@@ -19,7 +19,7 @@ public class GetBookExecute implements Executable<String> {
         long id = userDataGetter.getId();
 
         try {
-            return ServiceFabric.getFabric().getBookService().getBook(id, SessionHolder.getSession()).toString();
+            return ServiceFabric.getFabric().getBookService().getBook(id, SessionHolder.getUserSession()).toString();
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.GET_BOOK.getFailMessage(), e);
         }

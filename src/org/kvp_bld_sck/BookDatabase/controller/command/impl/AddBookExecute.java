@@ -27,7 +27,7 @@ public class AddBookExecute implements Executable<String> {
         Book book = new Book(title, author, date, location);
 
         try {
-            return "new book id=" + String.valueOf(ServiceFabric.getFabric().getBookService().addBook(book, SessionHolder.getSession()));
+            return "new book id=" + String.valueOf(ServiceFabric.getFabric().getBookService().addBook(book, SessionHolder.getUserSession()));
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.ADD_BOOK.getFailMessage(), e);
         }

@@ -9,7 +9,7 @@ public class SignOutExecute implements Executable {
 
     @Override
     public String execute() throws ControllerException {
-        String username = SessionHolder.getSession().getUser().getUsername();
+        String username = SessionHolder.getUserSession().getUser().getUsername();
         SessionHolder.closeSession();
         return Commands.SIGN_OUT.getSuccessMessage() + ", " + username;
     }

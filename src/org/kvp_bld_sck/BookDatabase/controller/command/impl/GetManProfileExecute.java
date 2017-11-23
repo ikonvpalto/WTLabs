@@ -21,7 +21,7 @@ public class GetManProfileExecute implements Executable<String> {
         String fullName = userDataGetter.getFullName(true);
 
         try {
-            return profileService.getProfile(fullName, SessionHolder.getSession()).toString();
+            return profileService.getProfile(fullName, SessionHolder.getUserSession()).toString();
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.GET_MAN_PROFILE.getFailMessage(), e);
         }

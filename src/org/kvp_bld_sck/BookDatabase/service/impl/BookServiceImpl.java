@@ -4,7 +4,7 @@ import org.kvp_bld_sck.BookDatabase.dao.BookDao;
 import org.kvp_bld_sck.BookDatabase.dao.DaoFactory;
 import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.entity.Book;
-import org.kvp_bld_sck.BookDatabase.entity.Session;
+import org.kvp_bld_sck.BookDatabase.entity.UserSession;
 import org.kvp_bld_sck.BookDatabase.service.BookService;
 import org.kvp_bld_sck.BookDatabase.service.exception.BookServiceException;
 import org.kvp_bld_sck.BookDatabase.service.exception.InvalidDataException;
@@ -22,8 +22,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book getBook(long id, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("get", session))
+    public Book getBook(long id, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("get", userSession))
             throw new PermissionDeniedException("cannot get book: permission denied");
 
         if (id < 1)
@@ -37,8 +37,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> getBooks(Book pattern, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("get", session))
+    public List<Book> getBooks(Book pattern, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("get", userSession))
             throw new PermissionDeniedException("cannot get books: permission denied");
 
         if (null == pattern)
@@ -52,8 +52,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public long addBook(Book book, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("add", session))
+    public long addBook(Book book, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("add", userSession))
             throw new PermissionDeniedException("cannot add book: permission denied");
 
         if ((null == book)
@@ -71,8 +71,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(Book book, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("update", session))
+    public void updateBook(Book book, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("update", userSession))
             throw new PermissionDeniedException("cannot update book: permission denied");
 
         if ((null == book)
@@ -91,8 +91,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBook(Book book, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("delete", session))
+    public void deleteBook(Book book, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("delete", userSession))
             throw new PermissionDeniedException("cannot delete book: permission denied");
 
         if ((null == book) || (1 > book.getId()))

@@ -21,7 +21,7 @@ public class GetProfileByIdExecute implements Executable<String> {
         long id = userDataGetter.getId();
 
         try {
-            return profileService.getProfile(id, SessionHolder.getSession()).toString();
+            return profileService.getProfile(id, SessionHolder.getUserSession()).toString();
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.GET_PROFILE_BY_ID.getFailMessage(), e);
         }

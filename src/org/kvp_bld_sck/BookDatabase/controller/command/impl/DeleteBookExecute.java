@@ -21,7 +21,7 @@ public class DeleteBookExecute implements Executable<String> {
         Book book = new Book(id);
 
         try {
-            ServiceFabric.getFabric().getBookService().deleteBook(book, SessionHolder.getSession());
+            ServiceFabric.getFabric().getBookService().deleteBook(book, SessionHolder.getUserSession());
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.DELETE_BOOK.getFailMessage(), e);
         }

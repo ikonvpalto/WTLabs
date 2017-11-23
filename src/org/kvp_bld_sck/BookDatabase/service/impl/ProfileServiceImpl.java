@@ -4,7 +4,7 @@ import org.kvp_bld_sck.BookDatabase.dao.DaoFactory;
 import org.kvp_bld_sck.BookDatabase.dao.ProfileDao;
 import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.entity.Profile;
-import org.kvp_bld_sck.BookDatabase.entity.Session;
+import org.kvp_bld_sck.BookDatabase.entity.UserSession;
 import org.kvp_bld_sck.BookDatabase.service.ProfileService;
 import org.kvp_bld_sck.BookDatabase.service.exception.*;
 
@@ -14,8 +14,8 @@ public class ProfileServiceImpl implements ProfileService {
     private PermissionChecker permissionChecker = PermissionChecker.getChecker();
 
     @Override
-    public Profile getProfile(long id, Session session) throws ServiceException {
-        if (!permissionChecker.checkMethod("get", session))
+    public Profile getProfile(long id, UserSession userSession) throws ServiceException {
+        if (!permissionChecker.checkMethod("get", userSession))
             throw new PermissionDeniedException("cannot get profile: permission denied");
         if (id < 1)
             throw new InvalidDataException("profile id not correct");
@@ -27,14 +27,14 @@ public class ProfileServiceImpl implements ProfileService {
             throw new ProfileServiceException("cannot get profile " + id, e);
         }
 
-        if (!permissionChecker.checkProfile(profile.getSecurityLevel(), session))
+        if (!permissionChecker.checkProfile(profile.getSecurityLevel(), userSession))
             throw new PermissionDeniedException("cannot get profile: permission denied");
         return profile;
     }
 
     @Override
-    public Profile getProfile(String fullName, Session session) throws ServiceException {
-        if (!permissionChecker.checkMethod("get", session))
+    public Profile getProfile(String fullName, UserSession userSession) throws ServiceException {
+        if (!permissionChecker.checkMethod("get", userSession))
             throw new PermissionDeniedException("cannot get profile: permission denied");
         if (null == fullName)
             throw new InvalidDataException("name not correct");
@@ -46,14 +46,14 @@ public class ProfileServiceImpl implements ProfileService {
             throw new ProfileServiceException("cannot get profile of " + fullName, e);
         }
 
-        if (!permissionChecker.checkProfile(profile.getSecurityLevel(), session))
+        if (!permissionChecker.checkProfile(profile.getSecurityLevel(), userSession))
             throw new PermissionDeniedException("cannot get profile: permission denied");
         return profile;
     }
 
     @Override
-    public long addProfile(Profile profile, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("add", session))
+    public long addProfile(Profile profile, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("add", userSession))
             throw new PermissionDeniedException("cannot add profile: permission denied");
         if ((null == profile)
                 || (null == profile.getFullName())
@@ -62,7 +62,7 @@ public class ProfileServiceImpl implements ProfileService {
                 || (null == profile.getCharacteristics())
                 || (null == profile.getSecurityLevel()))
             throw new InvalidDataException("profile data not correct");
-        if (!PermissionChecker.getChecker().checkProfile(profile.getSecurityLevel(), session))
+        if (!PermissionChecker.getChecker().checkProfile(profile.getSecurityLevel(), userSession))
             throw new PermissionDeniedException("cannot add profile: permission denied");
 
         try {
@@ -73,8 +73,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void updateProfile(Profile profile, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("update", session))
+    public void updateProfile(Profile profile, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("update", userSession))
             throw new PermissionDeniedException("cannot update profile: permission denied");
 
         if ((null == profile)
@@ -93,7 +93,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new ProfileServiceException("cannot update " + profile, e);
         }
 
-        if (!PermissionChecker.getChecker().checkProfile(old.getSecurityLevel(), session))
+        if (!PermissionChecker.getChecker().checkProfile(old.getSecurityLevel(), userSession))
             throw new PermissionDeniedException("cannot update profile: permission denied");
 
         try {
@@ -104,8 +104,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void deleteProfile(long id, Session session) throws ServiceException {
-        if (!PermissionChecker.getChecker().checkMethod("delete", session))
+    public void deleteProfile(long id, UserSession userSession) throws ServiceException {
+        if (!PermissionChecker.getChecker().checkMethod("delete", userSession))
             throw new PermissionDeniedException("cannot delete profile: permission denied");
 
         if (1 > id)
@@ -118,7 +118,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new ProfileServiceException("cannot delete profile " + id, e);
         }
 
-        if (!PermissionChecker.getChecker().checkProfile(old.getSecurityLevel(), session))
+        if (!PermissionChecker.getChecker().checkProfile(old.getSecurityLevel(), userSession))
             throw new PermissionDeniedException("cannot delete profile: permission denied");
 
         try {

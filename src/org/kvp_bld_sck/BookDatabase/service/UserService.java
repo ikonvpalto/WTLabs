@@ -1,10 +1,8 @@
 package org.kvp_bld_sck.BookDatabase.service;
 
-import org.kvp_bld_sck.BookDatabase.entity.Session;
+import org.kvp_bld_sck.BookDatabase.entity.UserSession;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
-
-import java.util.List;
 
 public interface UserService {
 
@@ -12,9 +10,9 @@ public interface UserService {
      * @return id of new session
      * @throws ServiceException
      */
-    Session signIn(User user) throws ServiceException;
-    void signOut(Session session) throws ServiceException;
+    UserSession signIn(User user) throws ServiceException;
+    void signOut(UserSession userSession) throws ServiceException;
     void signUp(User user) throws ServiceException;
-    User getSignedInUser(Session session) throws ServiceException;
+    User getSignedInUser(UserSession userSession) throws ServiceException;
 
 }

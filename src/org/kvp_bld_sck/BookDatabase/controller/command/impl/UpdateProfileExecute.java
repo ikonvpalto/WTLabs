@@ -30,7 +30,7 @@ public class UpdateProfileExecute implements Executable<String> {
         Profile profile = new Profile(id, fullName, sex, birthDate, characteristics, securityLevel);
 
         try {
-            profileService.updateProfile(profile, SessionHolder.getSession());
+            profileService.updateProfile(profile, SessionHolder.getUserSession());
             return Commands.UPDATE_PROFILE.getSuccessMessage();
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.UPDATE_PROFILE.getFailMessage(), e);

@@ -6,17 +6,21 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Session {
+public class UserSession {
 
     private String id;
     private User user;
 
-    public Session(String id, User user) {
+    public UserSession(String id, User user) {
         this.id = id;
         this.user = user;
     }
 
-    public Session() {
+    public UserSession(User user) {
+        this.user = user;
+    }
+
+    public UserSession() {
     }
 
     public String getId() {
@@ -43,7 +47,7 @@ public class Session {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Session)
-                && (id.equals(((Session) obj).id));
+        return (obj instanceof UserSession)
+                && (id.equals(((UserSession) obj).id));
     }
 }

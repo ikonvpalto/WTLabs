@@ -21,7 +21,7 @@ public class DeleteProfileExecute implements Executable<String> {
         long id = userDataGetter.getId();
 
         try {
-            profileService.deleteProfile(id, SessionHolder.getSession());
+            profileService.deleteProfile(id, SessionHolder.getUserSession());
             return Commands.DELETE_PROFILE.getSuccessMessage();
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.DELETE_PROFILE.getFailMessage(), e);

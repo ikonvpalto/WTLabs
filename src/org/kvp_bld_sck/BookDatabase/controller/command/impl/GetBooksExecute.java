@@ -12,9 +12,7 @@ import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
 import org.kvp_bld_sck.BookDatabase.view.ViewFabric;
 
-import java.util.Date;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GetBooksExecute implements Executable<String> {
 
@@ -29,7 +27,7 @@ public class GetBooksExecute implements Executable<String> {
 
         Book book = new Book(title, author);
         try {
-            return ServiceFabric.getFabric().getBookService().getBooks(book, SessionHolder.getSession())
+            return ServiceFabric.getFabric().getBookService().getBooks(book, SessionHolder.getUserSession())
                     .stream()
                     .map(Book::toString)
                     .collect(Collectors.joining("\n"));

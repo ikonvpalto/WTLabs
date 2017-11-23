@@ -28,7 +28,7 @@ public class UpdateBookExecute implements Executable<String> {
         Book book = new Book(id, title, author, date, location);
 
         try {
-            ServiceFabric.getFabric().getBookService().updateBook(book, SessionHolder.getSession());
+            ServiceFabric.getFabric().getBookService().updateBook(book, SessionHolder.getUserSession());
         } catch (ServiceException e) {
             throw new CannotExecuteCommandException(Commands.UPDATE_BOOK.getFailMessage(), e);
         }

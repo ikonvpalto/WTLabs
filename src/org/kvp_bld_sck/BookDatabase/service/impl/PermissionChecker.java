@@ -5,7 +5,7 @@ import org.kvp_bld_sck.BookDatabase.dao.SessionDao;
 import org.kvp_bld_sck.BookDatabase.dao.UserDao;
 import org.kvp_bld_sck.BookDatabase.dao.exception.DaoException;
 import org.kvp_bld_sck.BookDatabase.entity.Profile;
-import org.kvp_bld_sck.BookDatabase.entity.Session;
+import org.kvp_bld_sck.BookDatabase.entity.UserSession;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 import org.kvp_bld_sck.BookDatabase.service.exception.InvalidDataException;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
@@ -44,27 +44,27 @@ public class PermissionChecker {
         return profileLevelsPermissions.get(userGroup).contains(securityLevel);
     }
 
-    public boolean checkMethod(String method, Session session) throws ServiceException {
-        if ((null == session) || (null == session.getId()))
-            throw new InvalidDataException("session id not correct");
+    public boolean checkMethod(String method, UserSession userSession) throws ServiceException {
+        if ((null == userSession) || (null == userSession.getId()))
+            throw new InvalidDataException("userSession id not correct");
         User user;
         try {
-            user = userDao.getUser(sessionDao.getUser(session).getId());
+            user = userDao.getUser(sessionDao.getUser(userSession).getId());
             return checkMethod(method, user.getUserGroup());
         } catch (DaoException e) {
-            throw new ServiceException("cannot get user by session " + session.getId());
+            throw new ServiceException("cannot get user by userSession " + userSession.getId());
         }
     }
 
-    public boolean checkProfile(Profile.SecurityLevel securityLevel, Session session) throws ServiceException {
-        if ((null == session) || (null == session.getId()))
-            throw new InvalidDataException("session id not correct");
+    public boolean checkProfile(Profile.SecurityLevel securityLevel, UserSession userSession) throws ServiceException {
+        if ((null == userSession) || (null == userSession.getId()))
+            throw new InvalidDataException("userSession id not correct");
         User user;
         try {
-            user = userDao.getUser(sessionDao.getUser(session).getId());
+            user = userDao.getUser(sessionDao.getUser(userSession).getId());
             return checkProfile(securityLevel, user.getUserGroup());
         } catch (DaoException e) {
-            throw new ServiceException("cannot get user by session " + session.getId());
+            throw new ServiceException("cannot get user by userSession " + userSession.getId());
         }
     }
 
