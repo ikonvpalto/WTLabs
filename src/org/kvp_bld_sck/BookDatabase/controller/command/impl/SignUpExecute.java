@@ -8,8 +8,8 @@ import org.kvp_bld_sck.BookDatabase.controller.usercommunication.UserDataGetter;
 import org.kvp_bld_sck.BookDatabase.controller.command.Executable;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.impl.UserDataGetterImpl;
 import org.kvp_bld_sck.BookDatabase.entity.User;
-import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
-import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.transport.TransportFabric;
+import org.kvp_bld_sck.BookDatabase.transport.exception.TransportException;
 
 public class SignUpExecute implements Executable<String> {
 
@@ -26,8 +26,8 @@ public class SignUpExecute implements Executable<String> {
         User user = new User(username, password, email, User.UserGroup.USER);
 
         try {
-            ServiceFabric.getFabric().getUserService().signUp(user);
-        } catch (ServiceException e) {
+            TransportFabric.getFabric().getClientTransport().sendRequest("signUp", user);
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.SIGN_UP.getFailMessage(), e);
         }
 

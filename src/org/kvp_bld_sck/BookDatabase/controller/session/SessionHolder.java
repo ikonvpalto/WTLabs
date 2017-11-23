@@ -9,6 +9,8 @@ import org.kvp_bld_sck.BookDatabase.entity.UserSession;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
 import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.transport.TransportFabric;
+import org.kvp_bld_sck.BookDatabase.transport.exception.TransportException;
 
 public class SessionHolder {
 
@@ -19,8 +21,8 @@ public class SessionHolder {
             throw new SessionUnclosedException("old userSession is not closed");
 
         try {
-            userSession = ServiceFabric.getFabric().getUserService().signIn(user);
-        } catch (ServiceException e) {
+            userSession = TransportFabric.getFabric().getClientTransport().sendRequest("signIn", user);
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.SIGN_IN.getFailMessage(), e);
         }
     }
@@ -30,8 +32,8 @@ public class SessionHolder {
             throw new SessionNotOpenException("there is no userSession had open");
 
         try {
-            ServiceFabric.getFabric().getUserService().signOut(userSession);
-        } catch (ServiceException e) {
+            userSession = TransportFabric.getFabric().getClientTransport().sendRequest("signIn", userSession);
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.SIGN_OUT.getFailMessage(), e);
         }
 

@@ -7,22 +7,23 @@ import org.kvp_bld_sck.BookDatabase.controller.exception.ControllerException;
 import org.kvp_bld_sck.BookDatabase.controller.session.SessionHolder;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.UserDataGetter;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.impl.UserDataGetterImpl;
-import org.kvp_bld_sck.BookDatabase.service.ProfileService;
-import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
-import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.entity.Profile;
+import org.kvp_bld_sck.BookDatabase.transport.TransportFabric;
+import org.kvp_bld_sck.BookDatabase.transport.exception.TransportException;
 
 public class GetManProfileExecute implements Executable<String> {
 
     private UserDataGetter userDataGetter = UserDataGetterImpl.getInstance();
-    private ProfileService profileService = ServiceFabric.getFabric().getProfileService();
 
     @Override
     public String execute() throws ControllerException {
         String fullName = userDataGetter.getFullName(true);
 
         try {
-            return profileService.getProfile(fullName, SessionHolder.getUserSession()).toString();
-        } catch (ServiceException e) {
+            Profile profile = (Profile) TransportFabric.getFabric().getClientTransport()
+                    .sendRequest("getManProfile", fullName, SessionHolder.getUserSession());
+            return profile.toString();
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.GET_MAN_PROFILE.getFailMessage(), e);
         }
     }

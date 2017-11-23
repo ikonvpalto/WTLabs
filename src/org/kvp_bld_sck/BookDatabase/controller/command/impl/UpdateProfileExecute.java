@@ -8,16 +8,14 @@ import org.kvp_bld_sck.BookDatabase.controller.session.SessionHolder;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.UserDataGetter;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.impl.UserDataGetterImpl;
 import org.kvp_bld_sck.BookDatabase.entity.Profile;
-import org.kvp_bld_sck.BookDatabase.service.ProfileService;
-import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
-import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.transport.TransportFabric;
+import org.kvp_bld_sck.BookDatabase.transport.exception.TransportException;
 
 import java.util.Date;
 
 public class UpdateProfileExecute implements Executable<String> {
 
     private UserDataGetter userDataGetter = UserDataGetterImpl.getInstance();
-    private ProfileService profileService = ServiceFabric.getFabric().getProfileService();
 
     @Override
     public String execute() throws ControllerException {
@@ -30,9 +28,10 @@ public class UpdateProfileExecute implements Executable<String> {
         Profile profile = new Profile(id, fullName, sex, birthDate, characteristics, securityLevel);
 
         try {
-            profileService.updateProfile(profile, SessionHolder.getUserSession());
+            TransportFabric.getFabric().getClientTransport()
+                    .sendRequest("updateProfile", profile, SessionHolder.getUserSession());
             return Commands.UPDATE_PROFILE.getSuccessMessage();
-        } catch (ServiceException e) {
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.UPDATE_PROFILE.getFailMessage(), e);
         }
     }

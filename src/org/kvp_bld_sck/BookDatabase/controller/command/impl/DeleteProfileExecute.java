@@ -7,23 +7,22 @@ import org.kvp_bld_sck.BookDatabase.controller.exception.ControllerException;
 import org.kvp_bld_sck.BookDatabase.controller.session.SessionHolder;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.UserDataGetter;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.impl.UserDataGetterImpl;
-import org.kvp_bld_sck.BookDatabase.service.ProfileService;
-import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
-import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.transport.TransportFabric;
+import org.kvp_bld_sck.BookDatabase.transport.exception.TransportException;
 
 public class DeleteProfileExecute implements Executable<String> {
 
     private UserDataGetter userDataGetter = UserDataGetterImpl.getInstance();
-    private ProfileService profileService = ServiceFabric.getFabric().getProfileService();
 
     @Override
     public String execute() throws ControllerException {
         long id = userDataGetter.getId();
 
         try {
-            profileService.deleteProfile(id, SessionHolder.getUserSession());
+            TransportFabric.getFabric().getClientTransport()
+                    .sendRequest("deleteProfile", id, SessionHolder.getUserSession());
             return Commands.DELETE_PROFILE.getSuccessMessage();
-        } catch (ServiceException e) {
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.DELETE_PROFILE.getFailMessage(), e);
         }
     }

@@ -8,16 +8,14 @@ import org.kvp_bld_sck.BookDatabase.controller.session.SessionHolder;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.UserDataGetter;
 import org.kvp_bld_sck.BookDatabase.controller.usercommunication.impl.UserDataGetterImpl;
 import org.kvp_bld_sck.BookDatabase.entity.Profile;
-import org.kvp_bld_sck.BookDatabase.service.ProfileService;
-import org.kvp_bld_sck.BookDatabase.service.ServiceFabric;
-import org.kvp_bld_sck.BookDatabase.service.exception.ServiceException;
+import org.kvp_bld_sck.BookDatabase.transport.TransportFabric;
+import org.kvp_bld_sck.BookDatabase.transport.exception.TransportException;
 
 import java.util.Date;
 
 public class AddProfileExecute implements Executable<String> {
 
     private UserDataGetter userDataGetter = UserDataGetterImpl.getInstance();
-    private ProfileService profileService = ServiceFabric.getFabric().getProfileService();
 
     @Override
     public String execute() throws ControllerException {
@@ -30,8 +28,10 @@ public class AddProfileExecute implements Executable<String> {
         Profile profile = new Profile(fullName, sex, birthDate, characteristics, securityLevel);
 
         try {
-            return "new book id=" + String.valueOf(profileService.addProfile(profile, SessionHolder.getUserSession()));
-        } catch (ServiceException e) {
+            int id = (Integer) TransportFabric.getFabric().getClientTransport()
+                    .sendRequest("addProfile", profile, SessionHolder.getUserSession());
+            return "new book id=" + id;
+        } catch (TransportException e) {
             throw new CannotExecuteCommandException(Commands.ADD_PROFILE.getFailMessage(), e);
         }
 
