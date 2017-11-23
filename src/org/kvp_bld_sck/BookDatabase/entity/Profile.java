@@ -1,8 +1,9 @@
 package org.kvp_bld_sck.BookDatabase.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Profile {
+public class Profile implements Serializable {
 
     private long id;
     private String fullName;

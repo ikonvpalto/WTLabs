@@ -2,11 +2,12 @@ package org.kvp_bld_sck.BookDatabase.entity;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class UserSession {
+public class UserSession implements Serializable {
 
     private String id;
     private User user;
