@@ -1,7 +1,7 @@
 package org.kvp_bld_sck.BookDatabase;
 
-import org.kvp_bld_sck.BookDatabase.transport.exception.ServerException;
-import org.kvp_bld_sck.BookDatabase.transport.tcp.ServerImpl;
+import org.kvp_bld_sck.BookDatabase.server.transport.exception.ServerException;
+import org.kvp_bld_sck.BookDatabase.server.transport.tcp.ServerImpl;
 
 public class Server {
 

@@ -1,10 +1,10 @@
-package org.kvp_bld_sck.BookDatabase.dao.impl;
+package org.kvp_bld_sck.BookDatabase.server.dao.impl;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.kvp_bld_sck.BookDatabase.dao.SessionDao;
-import org.kvp_bld_sck.BookDatabase.dao.exception.SessionDaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.SessionDataFileNotFoundException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.SessionNotFoundException;
+import org.kvp_bld_sck.BookDatabase.server.dao.SessionDao;
+import org.kvp_bld_sck.BookDatabase.server.dao.exception.SessionDaoException;
+import org.kvp_bld_sck.BookDatabase.server.dao.exception.SessionDataFileNotFoundException;
+import org.kvp_bld_sck.BookDatabase.server.dao.exception.SessionNotFoundException;
 import org.kvp_bld_sck.BookDatabase.entity.User;
 
 import java.io.*;

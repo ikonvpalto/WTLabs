@@ -1,9 +1,9 @@
-package org.kvp_bld_sck.BookDatabase.dao.impl;
+package org.kvp_bld_sck.BookDatabase.server.dao.impl;
 
-import org.kvp_bld_sck.BookDatabase.dao.BookDao;
-import org.kvp_bld_sck.BookDatabase.dao.exception.BookDaoException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.BookDataFileNotFoundException;
-import org.kvp_bld_sck.BookDatabase.dao.exception.BookNotFoundException;
+import org.kvp_bld_sck.BookDatabase.server.dao.BookDao;
+import org.kvp_bld_sck.BookDatabase.server.dao.exception.BookDaoException;
+import org.kvp_bld_sck.BookDatabase.server.dao.exception.BookDataFileNotFoundException;
+import org.kvp_bld_sck.BookDatabase.server.dao.exception.BookNotFoundException;
 import org.kvp_bld_sck.BookDatabase.entity.Book;
 
 import java.io.*;
